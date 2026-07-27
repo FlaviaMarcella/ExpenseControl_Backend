@@ -7,6 +7,8 @@ public class PeopleMapper
 {
     public PeopleDto MapToDto(People people)
     {
+        ArgumentNullException.ThrowIfNull(people);
+
         return new PeopleDto(people.Id, people.Name, people.LastName, people.Age, people.Relationship, people.Email,
             people.Phone);
     }

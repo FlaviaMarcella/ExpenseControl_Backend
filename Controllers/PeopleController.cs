@@ -1,6 +1,7 @@
 using ExpenseControl.Api.Dto;
 using ExpenseControl.Api.Model.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace ExpenseControl.Api.Controllers;
 
@@ -8,6 +9,10 @@ namespace ExpenseControl.Api.Controllers;
 [Route(ApiRoutes.People.Base)]
 public class PeopleController(IPeopleService peopleService, ITransactionService transactionService) : ControllerBase
 {
+    [SwaggerOperation(
+        Summary = "Get all people"
+    )]
+    [ProducesResponseType(typeof(IEnumerable<PeopleDto>), StatusCodes.Status200OK)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PeopleDto>>> GetAll()
     {
@@ -15,6 +20,11 @@ public class PeopleController(IPeopleService peopleService, ITransactionService 
         return Ok(peoples);
     }
 
+    [SwaggerOperation(
+        Summary = "Get a person by ID"
+    )]
+    [ProducesResponseType(typeof(PeopleDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id}")]
     public async Task<ActionResult<PeopleDto>> GetById(int id)
     {
@@ -27,6 +37,10 @@ public class PeopleController(IPeopleService peopleService, ITransactionService 
         return Ok(people);
     }
 
+    [SwaggerOperation(
+        Summary = "Create a new person"
+    )]
+    [ProducesResponseType(typeof(PeopleDto), StatusCodes.Status201Created)]
     [HttpPost]
     public async Task<ActionResult<PeopleDto>> Create(PeopleDto peopleDto)
     {
@@ -34,6 +48,11 @@ public class PeopleController(IPeopleService peopleService, ITransactionService 
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
+    [SwaggerOperation(
+        Summary = "Update an existing person"
+    )]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpPut("{id}")]
     public async Task<ActionResult<PeopleDto>> Update(int id, PeopleDto peopleDto)
     {
@@ -46,6 +65,11 @@ public class PeopleController(IPeopleService peopleService, ITransactionService 
         return NoContent();
     }
 
+    [SwaggerOperation(
+        Summary = "Delete a person"
+    )]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
