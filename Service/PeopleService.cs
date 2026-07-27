@@ -49,7 +49,7 @@ public class PeopleService(
 
         people.Name = peopleDto.Name;
         people.LastName = peopleDto.LastName;
-        people.Age = peopleDto.Age;
+        people.BirthDate = peopleDto.DateOfBirth;
         people.Relationship = peopleDto.Relationship;
         people.Email = peopleDto.Email;
         people.Phone = peopleDto.Phone;
