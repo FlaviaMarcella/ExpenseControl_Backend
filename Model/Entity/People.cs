@@ -19,8 +19,8 @@ public class People
     [MaxLength(150, ErrorMessage = "Last Name cannot exceed 150 characters.")]
     public string LastName { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Age is required.")]
-    public int Age { get; set; }
+    [Required(ErrorMessage = "Birth Date is required.")]
+    public DateOnly BirthDate { get; set; }
 
     public Relationship Relationship { get; set; }
 
