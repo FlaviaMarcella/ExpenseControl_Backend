@@ -1,0 +1,58 @@
+# Build results
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# Visual Studio cache/options
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+*.sln.iml
+
+# NuGet
+*.nupkg
+.nuget/
+
+# Build log files
+*.log
+npm-debug.log*
+
+# User-specific files
+[Ll]ocal.settings.json
+appsettings.local.json
+
+# Database files
+*.db
+*.mdb
+*.sqlite
+*.sqlite3
+
+# Temporary files
+[Tt]emp/
+[Tt]mp/
+*.tmp
+*.bak
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+.directory
+
+# Environment files
+.env
+.env.local
+
+# Testing
+TestResults/
+.coverage/
+
+# Node modules (if using npm/TypeScript)
+node_modules/
