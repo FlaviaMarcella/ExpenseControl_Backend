@@ -13,7 +13,14 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.10" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\"/>
+    <Folder Include="Dto\"/>
+    <Folder Include="Mapper\"/>
+    <Folder Include="Model\Repository\"/>
+    <Folder Include="Service\"/>
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,0 @@
-@ExpenseControl.Api_HostAddress = http://localhost:5241
-
-GET {{ExpenseControl.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
