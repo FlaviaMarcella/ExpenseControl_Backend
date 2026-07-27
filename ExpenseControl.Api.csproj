@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <Folder Include="Controllers\"/>
-    <Folder Include="Dto\"/>
     <Folder Include="Mapper\"/>
     <Folder Include="Model\Repository\"/>
     <Folder Include="Service\"/>
