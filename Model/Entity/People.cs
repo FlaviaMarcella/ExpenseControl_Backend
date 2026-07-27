@@ -15,11 +15,19 @@ public class People
     [MaxLength(150, ErrorMessage = "Name cannot exceed 150 characters.")]
     public string Name { get; set; } = string.Empty;
 
+    [Required(ErrorMessage = "Last Name is required.")]
+    [MaxLength(150, ErrorMessage = "Last Name cannot exceed 150 characters.")]
+    public string LastName { get; set; } = string.Empty;
+
     [Required(ErrorMessage = "Age is required.")]
     public int Age { get; set; }
 
     public Relationship Relationship { get; set; }
+
+    [EmailAddress(ErrorMessage = "Email is invalid.")]
     public string Email { get; set; } = string.Empty;
+
+    [Phone(ErrorMessage = "Phone is invalid")]
     public string Phone { get; set; } = string.Empty;
 
     public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
