@@ -1,5 +1,6 @@
-﻿using ExpenseControl.Api.Dto;
+using ExpenseControl.Api.Dto;
 using ExpenseControl.Api.Model.Repository;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseControl.Api.Controllers;
 
@@ -15,7 +16,7 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return Ok(transactions);
     }
 
-    [HttpGet("/{peopleId}")]
+    [HttpGet($"{ApiRoutes.Transaction.GetByPeopleId}/{{peopleId}}")]
     public async Task<ActionResult<IEnumerable<TransactionDto>>> GetByPeopleId(int peopleId)
     {
         var people = await peopleService.GetByIdAsync(peopleId);
@@ -65,7 +66,7 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return NoContent();
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
         var transaction = await transactionService.GetByIdAsync(id);
@@ -78,7 +79,7 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return NoContent();
     }
 
-    [HttpDelete("{peopleId}")]
+    [HttpDelete($"{ApiRoutes.Transaction.GetByPeopleId}/{{peopleId}}")]
     public async Task<ActionResult> DeleteAllByPeopleId(int peopleId)
     {
         var people = await peopleService.GetByIdAsync(peopleId);

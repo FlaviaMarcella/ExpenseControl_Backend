@@ -10,7 +10,7 @@ namespace ExpenseControl.Api.Service;
 
 public class TransactionService(
     AppDbContext context,
-    PeopleService peopleService,
+    IPeopleService peopleService,
     ILogger<TransactionService> logger,
     TransactionMapper transactionMapper) : ITransactionService
 {
