@@ -11,10 +11,16 @@ namespace ExpenseControl.Api.Controllers;
 public class TransactionController(ITransactionService transactionService, IPeopleService peopleService)
     : ControllerBase
 {
+    /// <summary>
+    /// Retorna todas as transações cadastradas no sistema.
+    /// </summary>
+    /// <returns></returns>
     [SwaggerOperation(
-        Summary = "Get all transactions"
+        Summary = "Retorna todas as transações cadastradas no sistema",
+        Description =
+            "Retorna todas as transações cadastradas no sistema, incluindo informações sobre a pessoa associada a cada transação."
     )]
-    [ProducesResponseType(typeof(IEnumerable<TransactionDto>), StatusCodes.Status200OK)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Transações retornadas com sucesso", typeof(IEnumerable<TransactionDto>))]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TransactionDto>>> GetAll()
     {
@@ -22,12 +28,18 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return Ok(transactions);
     }
 
-    [SwaggerOperation(
-        Summary = "Get transactions by people ID"
-    )]
-    [ProducesResponseType(typeof(IEnumerable<TransactionDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    /// <summary>
+    /// Retorna todas as transações associadas a uma pessoa específica.
+    /// </summary>
+    /// <param name="peopleId"></param>
+    /// <returns></returns>
     [HttpGet($"{ApiRoutes.Transaction.GetByPeopleId}/{{peopleId}}")]
+    [SwaggerOperation(
+        Summary = "Retorna todas as transações associadas a uma pessoa específica",
+        Description =
+            "Retorna todas as transações associadas a uma pessoa específica, identificada pelo seu ID. Se a pessoa não existir, retorna 404 Not Found.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Transações retornadas com sucesso", typeof(IEnumerable<TransactionDto>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Pessoa não encontrada")]
     public async Task<ActionResult<IEnumerable<TransactionDto>>> GetByPeopleId(int peopleId)
     {
         var people = await peopleService.GetByIdAsync(peopleId);
@@ -40,12 +52,18 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return Ok(transactions);
     }
 
-    [SwaggerOperation(
-        Summary = "Get a transaction by ID"
-    )]
-    [ProducesResponseType(typeof(TransactionDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    /// <summary>
+    /// Retorna uma transação específica pelo seu ID.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("{id}")]
+    [SwaggerOperation(
+        Summary = "Retorna uma transação específica pelo seu ID",
+        Description =
+            "Retorna uma transação específica pelo seu ID. Se a transação não existir, retorna 404 Not Found.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Transação retornada com sucesso", typeof(TransactionDto))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Transação não encontrada")]
     public async Task<ActionResult<TransactionDto>> GetById(int id)
     {
         var transaction = await transactionService.GetByIdAsync(id);
@@ -57,12 +75,18 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return Ok(transaction);
     }
 
-    [SwaggerOperation(
-        Summary = "Create a new transaction"
-    )]
-    [ProducesResponseType(typeof(TransactionDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    /// <summary>
+    /// Cria uma nova transação.
+    /// </summary>
+    /// <param name="transactionDto"></param>
+    /// <returns></returns>
     [HttpPost]
+    [SwaggerOperation(
+        Summary = "Cria uma nova transação",
+        Description =
+            "Cria uma nova transação associada a uma pessoa existente. Se a pessoa não existir, retorna 404 Not Found.")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Transação criada com sucesso", typeof(TransactionDto))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Pessoa não encontrada")]
     public async Task<ActionResult<TransactionDto>> Create(TransactionDto transactionDto)
     {
         var people = await peopleService.GetByIdAsync(transactionDto.People.Id);
@@ -75,12 +99,19 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
-    [SwaggerOperation(
-        Summary = "Update an existing transaction"
-    )]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    /// <summary>
+    /// Atualiza uma transação existente.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="transactionDto"></param>
+    /// <returns></returns>
     [HttpPost("{id}")]
+    [SwaggerOperation(
+        Summary = "Atualiza uma transação existente",
+        Description =
+            "Atualiza uma transação existente identificada pelo seu ID. Se a transação não existir, retorna 404 Not Found.")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Transação atualizada com sucesso")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Transação não encontrada")]
     public async Task<ActionResult<TransactionDto>> Update(int id, TransactionDto transactionDto)
     {
         var updated = await transactionService.UpdateAsync(id, transactionDto);
@@ -92,12 +123,18 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return NoContent();
     }
 
-    [SwaggerOperation(
-        Summary = "Delete a transaction"
-    )]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    /// <summary>
+    /// Exclui uma transação existente pelo seu ID.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
+    [SwaggerOperation(
+        Summary = "Exclui uma transação existente pelo seu ID",
+        Description =
+            "Exclui uma transação existente identificada pelo seu ID. Se a transação não existir, retorna 404 Not Found.")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Transação excluída com sucesso")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Transação não encontrada")]
     public async Task<ActionResult> Delete(int id)
     {
         var transaction = await transactionService.GetByIdAsync(id);
@@ -110,12 +147,18 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return NoContent();
     }
 
-    [SwaggerOperation(
-        Summary = "Delete all transactions by people ID"
-    )]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    /// <summary>
+    /// Exclui todas as transações associadas a uma pessoa específica pelo ID da pessoa.
+    /// </summary>
+    /// <param name="peopleId"></param>
+    /// <returns></returns>
     [HttpDelete($"{ApiRoutes.Transaction.GetByPeopleId}/{{peopleId}}")]
+    [SwaggerOperation(
+        Summary = "Exclui todas as transações associadas a uma pessoa específica pelo ID da pessoa",
+        Description =
+            "Exclui todas as transações associadas a uma pessoa específica identificada pelo seu ID. Se a pessoa não existir, retorna 404 Not Found.")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Transações excluídas com sucesso")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Pessoa não encontrada")]
     public async Task<ActionResult> DeleteAllByPeopleId(int peopleId)
     {
         var people = await peopleService.GetByIdAsync(peopleId);
