@@ -56,3 +56,6 @@ TestResults/
 
 # Node modules (if using npm/TypeScript)
 node_modules/
+
+# Migrations
+/Migrations
