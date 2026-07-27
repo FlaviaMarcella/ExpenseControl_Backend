@@ -8,6 +8,9 @@ public class TransactionMapper
 {
     public TransactionDto MapToDto(Transaction transaction)
     {
+        ArgumentNullException.ThrowIfNull(transaction);
+        ArgumentNullException.ThrowIfNull(transaction.People);
+
         var peopleMapper = new PeopleMapper();
         var peopleDto = peopleMapper.MapToDto(transaction.People);
 

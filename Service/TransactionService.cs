@@ -16,7 +16,9 @@ public class TransactionService(
 {
     public async Task<IEnumerable<TransactionDto>> GetAllAsync()
     {
-        var transactions = await context.Transactions.ToListAsync();
+        var transactions = await context.Transactions
+            .Include(t => t.People)
+            .ToListAsync();
         return transactions.Select(transactionMapper.MapToDto);
     }
 
@@ -28,13 +30,18 @@ public class TransactionService(
             throw new InvalidOperationException($"People with ID {peopleId} does not exist.");
         }
 
-        var transactions = await context.Transactions.Where(t => t.People.Id == peopleId).ToListAsync();
+        var transactions = await context.Transactions
+            .Include(t => t.People)
+            .Where(t => t.People.Id == peopleId)
+            .ToListAsync();
         return transactions.Select(transactionMapper.MapToDto);
     }
 
     public async Task<TransactionDto?> GetByIdAsync(int id)
     {
-        var transaction = await context.Transactions.FindAsync(id);
+        var transaction = await context.Transactions
+            .Include(t => t.People)
+            .FirstOrDefaultAsync(t => t.Id == id);
         if (transaction == null)
         {
             return null;
@@ -92,7 +99,9 @@ public class TransactionService(
 
     public async Task<bool> DeleteAsync(int id)
     {
-        var transaction = await context.Transactions.FindAsync(id);
+        var transaction = await context.Transactions
+            .Include(t => t.People)
+            .FirstOrDefaultAsync(t => t.Id == id);
         if (transaction == null)
         {
             return false;

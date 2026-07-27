@@ -1,14 +1,20 @@
 using ExpenseControl.Api.Dto;
 using ExpenseControl.Api.Model.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace ExpenseControl.Api.Controllers;
 
 [ApiController]
 [Route(ApiRoutes.Transaction.Base)]
+[SwaggerTag("Transações")]
 public class TransactionController(ITransactionService transactionService, IPeopleService peopleService)
     : ControllerBase
 {
+    [SwaggerOperation(
+        Summary = "Get all transactions"
+    )]
+    [ProducesResponseType(typeof(IEnumerable<TransactionDto>), StatusCodes.Status200OK)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TransactionDto>>> GetAll()
     {
@@ -16,6 +22,11 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return Ok(transactions);
     }
 
+    [SwaggerOperation(
+        Summary = "Get transactions by people ID"
+    )]
+    [ProducesResponseType(typeof(IEnumerable<TransactionDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet($"{ApiRoutes.Transaction.GetByPeopleId}/{{peopleId}}")]
     public async Task<ActionResult<IEnumerable<TransactionDto>>> GetByPeopleId(int peopleId)
     {
@@ -29,6 +40,11 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return Ok(transactions);
     }
 
+    [SwaggerOperation(
+        Summary = "Get a transaction by ID"
+    )]
+    [ProducesResponseType(typeof(TransactionDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id}")]
     public async Task<ActionResult<TransactionDto>> GetById(int id)
     {
@@ -41,6 +57,11 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return Ok(transaction);
     }
 
+    [SwaggerOperation(
+        Summary = "Create a new transaction"
+    )]
+    [ProducesResponseType(typeof(TransactionDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpPost]
     public async Task<ActionResult<TransactionDto>> Create(TransactionDto transactionDto)
     {
@@ -54,6 +75,11 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
+    [SwaggerOperation(
+        Summary = "Update an existing transaction"
+    )]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpPost("{id}")]
     public async Task<ActionResult<TransactionDto>> Update(int id, TransactionDto transactionDto)
     {
@@ -66,6 +92,11 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return NoContent();
     }
 
+    [SwaggerOperation(
+        Summary = "Delete a transaction"
+    )]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
@@ -79,6 +110,11 @@ public class TransactionController(ITransactionService transactionService, IPeop
         return NoContent();
     }
 
+    [SwaggerOperation(
+        Summary = "Delete all transactions by people ID"
+    )]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpDelete($"{ApiRoutes.Transaction.GetByPeopleId}/{{peopleId}}")]
     public async Task<ActionResult> DeleteAllByPeopleId(int peopleId)
     {
