@@ -9,8 +9,7 @@ namespace ExpenseControl.Api.Service;
 public class PeopleService(
     AppDbContext context,
     ILogger<PeopleService> logger,
-    PeopleMapper peopleMapper,
-    TransactionService transactionService) : IPeopleService
+    PeopleMapper peopleMapper) : IPeopleService
 {
     public async Task<IEnumerable<PeopleDto>> GetAllAsync()
     {
@@ -68,22 +67,9 @@ public class PeopleService(
             return false;
         }
 
-        await transactionService.DeleteAllByPeopleIdAsync(id);
-
         context.Peoples.Remove(people);
         await context.SaveChangesAsync();
         logger.LogInformation("Deleted people with ID {Id}: {@People}", id, people);
-        return true;
-    }
-
-
-    public bool AgeVerified(int age)
-    {
-        if (age < 18)
-        {
-            return false;
-        }
-
         return true;
     }
 }

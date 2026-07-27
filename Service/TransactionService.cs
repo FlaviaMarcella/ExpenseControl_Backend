@@ -1,6 +1,7 @@
 ﻿using ExpenseControl.Api.Data;
 using ExpenseControl.Api.Dto;
 using ExpenseControl.Api.Mapper;
+using ExpenseControl.Api.Model.Domain;
 using ExpenseControl.Api.Model.Enums;
 using ExpenseControl.Api.Model.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -45,14 +46,21 @@ public class TransactionService(
 
     public async Task<TransactionDto> CreateAsync(TransactionDto transactionDto)
     {
-        var transaction = transactionMapper.MapToEntity(transactionDto);
-        context.Transactions.Add(transaction);
+        var people = await context.Peoples.FindAsync(transactionDto.People.Id);
+        if (people == null)
+        {
+            throw new InvalidOperationException($"People with ID {transactionDto.People.Id} does not exist.");
+        }
 
-        if (peopleService.AgeVerified(transaction.People.Age)! && transaction.Type == TypeTransaction.Receive)
+        var transaction = transactionMapper.MapToEntity(transactionDto);
+        transaction.People = people;
+
+        if (!TransactionRules.CanCreateReceiveTransaction(transaction.People.Age, transaction.Type))
         {
             throw new InvalidOperationException("People under 18 years old cannot create a receive transaction.");
         }
 
+        context.Transactions.Add(transaction);
         await context.SaveChangesAsync();
         logger.LogInformation("Created new transaction: {@Transaction}", transaction);
         return transactionMapper.MapToDto(transaction);
