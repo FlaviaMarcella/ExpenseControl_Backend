@@ -1,10 +1,12 @@
 using ExpenseControl.Api.Dto;
 using ExpenseControl.Api.Model.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace ExpenseControl.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route(ApiRoutes.Transaction.Base)]
 [SwaggerTag("Transações")]
@@ -105,7 +107,7 @@ public class TransactionController(ITransactionService transactionService, IPeop
     /// <param name="id"></param>
     /// <param name="transactionDto"></param>
     /// <returns></returns>
-    [HttpPost("{id}")]
+    [HttpPut("{id}")]
     [SwaggerOperation(
         Summary = "Atualiza uma transação existente",
         Description =

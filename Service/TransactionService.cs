@@ -2,7 +2,6 @@
 using ExpenseControl.Api.Dto;
 using ExpenseControl.Api.Mapper;
 using ExpenseControl.Api.Model.Domain;
-using ExpenseControl.Api.Model.Enums;
 using ExpenseControl.Api.Model.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,13 +58,13 @@ public class TransactionService(
             throw new InvalidOperationException($"People with ID {transactionDto.People.Id} does not exist.");
         }
 
-        var transaction = transactionMapper.MapToEntity(transactionDto);
-        transaction.People = people;
-
-        if (!TransactionRules.CanCreateReceiveTransaction(transaction.People.Age, transaction.Type))
+        if (!TransactionRules.CanCreateReceiveTransaction(transactionDto.People.Age, transactionDto.Type))
         {
             throw new InvalidOperationException("People under 18 years old cannot create a receive transaction.");
         }
+
+        var transaction = transactionMapper.MapToEntity(transactionDto);
+        transaction.People = people;
 
         context.Transactions.Add(transaction);
         await context.SaveChangesAsync();
@@ -90,7 +89,7 @@ public class TransactionService(
         transaction.Description = transactionDto.Description;
         transaction.Amount = transactionDto.Amount;
         transaction.Date = transactionDto.Date;
-        transaction.Type = Enum.Parse<TypeTransaction>(transactionDto.Type);
+        transaction.Type = transactionDto.Type;
         transaction.People = (await context.Peoples.FindAsync(transactionDto.People.Id))!;
         await context.SaveChangesAsync();
         logger.LogInformation("Updated transaction with ID {Id}: {@Transaction}", id, transaction);

@@ -1,10 +1,12 @@
 using ExpenseControl.Api.Dto;
 using ExpenseControl.Api.Model.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace ExpenseControl.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route(ApiRoutes.People.Base)]
 public class PeopleController(IPeopleService peopleService, ITransactionService transactionService) : ControllerBase

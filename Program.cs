@@ -1,11 +1,15 @@
 using System.Reflection;
+using System.Text;
 using System.Text.Json.Serialization;
 using ExpenseControl.Api.Data;
 using ExpenseControl.Api.Mapper;
 using ExpenseControl.Api.Middleware;
+using ExpenseControl.Api.Model.Entity;
 using ExpenseControl.Api.Model.Repository;
 using ExpenseControl.Api.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +23,26 @@ builder.Services.AddScoped<PeopleMapper>();
 
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<TransactionMapper>();
+
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<UserMapper>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -35,17 +59,25 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API para controle de gastos domésticos, com gestão de pessoas e transações."
     });
 
-    // Habilita os atributos [SwaggerOperation], [SwaggerResponse] etc.
-    // (equivalente aos @Operation/@ApiResponse do springdoc)
     options.EnableAnnotations();
 
-    // Lê os comentários /// dos Controllers/DTOs e exibe no Swagger
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     if (File.Exists(xmlPath))
     {
         options.IncludeXmlComments(xmlPath);
     }
+
+    // ----- Suporte a JWT no Swagger (botão "Authorize") -----
+    options.AddSecurityDefinition("Bearer", new OpenApiSecuritySchemeReference("Bearer", null, "Authorization"));
+
+    options.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecuritySchemeReference("Bearer", null, "Authorization"),
+            new List<string>()
+        }
+    });
 });
 
 var app = builder.Build();
@@ -55,6 +87,23 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     dbContext.Database.Migrate();
+
+    // ----- Seed de usuário padrão (apenas se ainda não existir nenhum) -----
+    if (!dbContext.Users.Any())
+    {
+        var authService = scope.ServiceProvider.GetRequiredService<AuthService>();
+
+        var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+        var defaultUser = new User
+        {
+            Username = config["DefaultAdminUser:Username"]!,
+            PasswordHash = authService.RegisterPassword(config["DefaultAdminUser:Password"]!),
+            People = null
+        };
+
+        dbContext.Users.Add(defaultUser);
+        dbContext.SaveChanges();
+    }
 }
 
 // ----- Pipeline HTTP -----

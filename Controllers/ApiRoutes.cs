@@ -4,6 +4,13 @@ public static class ApiRoutes
 {
     public const string Root = "api";
 
+    public static class Auth
+    {
+        public const string Base = Root + "/auth";
+        public const string Login = "/login";
+        public const string Register = "/register";
+    }
+
     public static class People
     {
         public const string Base = Root + "/people";
