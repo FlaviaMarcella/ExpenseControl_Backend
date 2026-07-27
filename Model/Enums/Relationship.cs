@@ -1,4 +1,7 @@
-﻿namespace ExpenseControl.Api.Model.Enums;
+using System.ComponentModel;
+using System.Reflection;
+
+namespace ExpenseControl.Api.Model.Enums;
 
 public enum Relationship
 {

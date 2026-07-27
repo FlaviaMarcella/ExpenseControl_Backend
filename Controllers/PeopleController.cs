@@ -1,5 +1,6 @@
-﻿using ExpenseControl.Api.Dto;
+using ExpenseControl.Api.Dto;
 using ExpenseControl.Api.Model.Repository;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseControl.Api.Controllers;
 
@@ -14,7 +15,7 @@ public class PeopleController(IPeopleService peopleService, ITransactionService 
         return Ok(peoples);
     }
 
-    [HttpGet("/{id}")]
+    [HttpGet("{id}")]
     public async Task<ActionResult<PeopleDto>> GetById(int id)
     {
         var people = await peopleService.GetByIdAsync(id);
@@ -33,7 +34,7 @@ public class PeopleController(IPeopleService peopleService, ITransactionService 
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
-    [HttpPut("/{id}")]
+    [HttpPut("{id}")]
     public async Task<ActionResult<PeopleDto>> Update(int id, PeopleDto peopleDto)
     {
         var updated = await peopleService.UpdateAsync(id, peopleDto);
@@ -45,7 +46,7 @@ public class PeopleController(IPeopleService peopleService, ITransactionService 
         return NoContent();
     }
 
-    [HttpDelete("/{id}")]
+    [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
         var people = await peopleService.GetByIdAsync(id);
