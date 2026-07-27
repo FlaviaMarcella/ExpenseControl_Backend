@@ -12,6 +12,6 @@ public static class ApiRoutes
     public static class Transaction
     {
         public const string Base = Root + "/transaction";
-        public const string GetByPeopleId = Base + "/people";
+        public const string GetByPeopleId = "/people";
     }
 }
