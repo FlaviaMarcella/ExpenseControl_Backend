@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.Reflection;
-
-namespace ExpenseControl.Api.Model.Enums;
+﻿namespace ExpenseControl.Api.Model.Enums;
 
 public enum Relationship
 {
@@ -18,9 +15,9 @@ public enum Relationship
 
 public static class RelationshipExtensions
 {
-    public static string getDescription(this Enum value)
+    public static string GetDescription(this Enum value)
     {
-        FieldInfo field = value.GetType().GetField(value.ToString());
+        FieldInfo field = value.GetType().GetField(value.ToString()) ?? throw new InvalidOperationException();
         var attribute = field?.GetCustomAttribute<DescriptionAttribute>();
         return attribute?.Description ?? value.ToString();
     }
