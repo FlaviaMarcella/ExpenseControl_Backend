@@ -1,3 +1,12 @@
-﻿namespace ExpenseControl.Api.Dto;
+﻿using ExpenseControl.Api.Model.Enums;
 
-public record PeopleDto(int Id, string Name, string LastName, int Age, string Relationship, string Email, string Phone);
+namespace ExpenseControl.Api.Dto;
+
+public record PeopleDto(
+    int Id,
+    string Name,
+    string LastName,
+    int Age,
+    Relationship Relationship,
+    string Email,
+    string Phone);
