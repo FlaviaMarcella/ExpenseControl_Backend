@@ -13,8 +13,8 @@ public static class ApiRoutes
     public static class Auth
     {
         public const string Base = Root + "/auth";
-        public const string Login = "/login";
-        public const string Register = "/register";
+        public const string Login = "login";
+        public const string Register = "register";
     }
 
     /// <summary>Rotas do <c>PeopleController</c>.</summary>
