@@ -4,8 +4,7 @@ API REST em **ASP.NET Core (.NET 10)** para controle de gastos domésticos: gest
 da família (`People`), lançamentos financeiros (`Transaction`), autenticação via **JWT**, e
 documentação interativa via **Swagger**.
 
-Projeto acadêmico/portfólio, desenvolvido como parte do processo seletivo para vaga de estágio
-em desenvolvimento backend.
+Projeto acadêmico/portfólio, desenvolvido para aprofundar os conhecimentos em C#.
 
 ## Stack
 
