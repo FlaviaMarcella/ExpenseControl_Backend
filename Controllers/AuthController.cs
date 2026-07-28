@@ -17,11 +17,14 @@ public class AuthController(
     AppDbContext context,
     UserMapper userMapper) : ControllerBase
 {
+    /// <summary>
+    /// Registra um novo usuário. Não exige autenticação (sem <c>[Authorize]</c>),
+    /// já que é o próprio ponto de entrada para obter credenciais.
+    /// </summary>
+    /// <param name="registerDto">Dados de registro (usuário, senha, e opcionalmente uma pessoa para associar).</param>
+    /// <returns>O usuário criado, sem senha/hash no corpo da resposta.</returns>
     [HttpPost(ApiRoutes.Auth.Register)]
     [SwaggerOperation(Summary = "Registra um novo usuário")]
-    [HttpPost(ApiRoutes.Auth.Register)]
-    [HttpPost(ApiRoutes.Auth.Register)]
-    [HttpPost(ApiRoutes.Auth.Register)]
     public async Task<ActionResult<UserDto>> Register(RegisterUserDto registerDto)
     {
         if (await context.Users.AnyAsync(u => u.Username == registerDto.Username))
@@ -52,6 +55,12 @@ public class AuthController(
         return Ok(userMapper.MapToDto(user));
     }
 
+    /// <summary>
+    /// Autentica um usuário e retorna um token JWT válido para chamadas subsequentes
+    /// aos endpoints protegidos com <c>[Authorize]</c>.
+    /// </summary>
+    /// <param name="loginDto">Credenciais informadas pelo usuário.</param>
+    /// <returns>Um objeto <c>{ token }</c> em caso de sucesso, ou 401 se as credenciais forem inválidas.</returns>
     [HttpPost(ApiRoutes.Auth.Login)]
     [SwaggerOperation(Summary = "Realiza login e retorna o token JWT")]
     public async Task<ActionResult> Login(LoginDto loginDto)

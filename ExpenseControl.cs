@@ -12,6 +12,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 
+// -----------------------------------------------------------------------------
+// Composition root da API ExpenseControl: registra serviços de DI, configura
+// autenticação JWT, Swagger/OpenAPI, o pipeline de middlewares HTTP, aplica
+// migrations automaticamente e garante um usuário administrativo padrão no
+// primeiro start (seed), para permitir login imediato em ambiente de dev.
+// -----------------------------------------------------------------------------
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ----- Serviços da aplicação -----
@@ -69,14 +76,20 @@ builder.Services.AddSwaggerGen(options =>
     }
 
     // ----- Suporte a JWT no Swagger (botão "Authorize") -----
-    options.AddSecurityDefinition("Bearer", new OpenApiSecuritySchemeReference("Bearer", null, "Authorization"));
-
-    options.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        {
-            new OpenApiSecuritySchemeReference("Bearer", null, "Authorization"),
-            new List<string>()
-        }
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description =
+            "Insira apenas o token JWT (sem o prefixo 'Bearer '). O Swagger adiciona o prefixo automaticamente."
+    });
+
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("Bearer", document)] = new List<string>(Array.Empty<string>())
     });
 });
 

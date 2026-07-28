@@ -6,17 +6,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseControl.Api.Service;
 
+/// <summary>
+/// Implementação de <see cref="IPeopleService"/> usando o EF Core (<see cref="AppDbContext"/>)
+/// diretamente como camada de acesso a dados (sem Repository intermediário).
+/// </summary>
 public class PeopleService(
     AppDbContext context,
     ILogger<PeopleService> logger,
     PeopleMapper peopleMapper) : IPeopleService
 {
+    /// <inheritdoc/>
     public async Task<IEnumerable<PeopleDto>> GetAllAsync()
     {
         var peoples = await context.Peoples.ToListAsync();
         return peoples.Select(p => peopleMapper.MapToDto(p));
     }
 
+    /// <inheritdoc/>
     public async Task<PeopleDto?> GetByIdAsync(int id)
     {
         var people = await context.Peoples.FindAsync(id);
@@ -29,6 +35,7 @@ public class PeopleService(
         return peopleMapper.MapToDto(people);
     }
 
+    /// <inheritdoc/>
     public async Task<PeopleDto> CreateAsync(PeopleDto peopleDto)
     {
         var people = peopleMapper.MapToEntity(peopleDto);
@@ -39,6 +46,7 @@ public class PeopleService(
         return peopleMapper.MapToDto(people);
     }
 
+    /// <inheritdoc/>
     public async Task<PeopleDto?> UpdateAsync(int id, PeopleDto peopleDto)
     {
         var people = await context.Peoples.FindAsync(id);
@@ -59,6 +67,7 @@ public class PeopleService(
         return peopleMapper.MapToDto(people);
     }
 
+    /// <inheritdoc/>
     public async Task<bool> DeleteAsync(int id)
     {
         var people = await context.Peoples.FindAsync(id);

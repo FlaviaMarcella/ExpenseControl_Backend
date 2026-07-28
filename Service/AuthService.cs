@@ -6,13 +6,27 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace ExpenseControl.Api.Service;
 
-// 2. Serviço de Autenticação
+/// <summary>
+/// Responsável pela lógica de autenticação: hash de senha (BCrypt) e emissão de tokens JWT.
+/// </summary>
+/// <remarks>
+/// As chaves de configuração usadas (<c>Jwt:Key</c>, <c>Jwt:Issuer</c>, <c>Jwt:Audience</c>,
+/// <c>Jwt:ExpiresInMinutes</c>) devem existir em <c>appsettings.json</c> e são validadas
+/// também em <c>Program.cs</c>, no registro do middleware de autenticação JWT.
+/// </remarks>
 public class AuthService(IConfiguration configuration)
 {
-    // Cadastro: Transforma senha em Hash (sal e hash embutidos)
+    /// <summary>Gera o hash BCrypt de uma senha em texto puro, para ser persistido em <see cref="User.PasswordHash"/>.</summary>
+    /// <param name="password">Senha em texto puro fornecida pelo usuário.</param>
+    /// <returns>Hash BCrypt (já incluindo o salt), pronto para ser salvo no banco.</returns>
     public string RegisterPassword(string password) => BCrypt.Net.BCrypt.HashPassword(password, workFactor: 12);
 
-    // Login: Verifica a senha com o Hash
+    /// <summary>
+    /// Verifica a senha informada contra o hash salvo e, se válida, gera um token JWT assinado.
+    /// </summary>
+    /// <param name="user">Usuário já carregado do banco (com <see cref="User.PasswordHash"/> preenchido).</param>
+    /// <param name="password">Senha em texto puro informada no login.</param>
+    /// <returns>O token JWT (string) se a senha for válida; <c>null</c> caso contrário.</returns>
     public string? LoginAndGenerateToken(User user, string password)
     {
         if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash)) return null; //

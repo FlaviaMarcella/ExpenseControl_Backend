@@ -7,12 +7,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseControl.Api.Service;
 
+/// <summary>
+/// Implementação de <see cref="ITransactionService"/>. Depende de <see cref="IPeopleService"/>
+/// (não do concreto <c>PeopleService</c>) para evitar dependência circular entre os dois serviços.
+/// </summary>
 public class TransactionService(
     AppDbContext context,
     IPeopleService peopleService,
     ILogger<TransactionService> logger,
     TransactionMapper transactionMapper) : ITransactionService
 {
+    /// <inheritdoc/>
     public async Task<IEnumerable<TransactionDto>> GetAllAsync()
     {
         var transactions = await context.Transactions
@@ -21,6 +26,7 @@ public class TransactionService(
         return transactions.Select(transactionMapper.MapToDto);
     }
 
+    /// <inheritdoc/>
     public async Task<IEnumerable<TransactionDto>> GetByPeopleIdAsync(int peopleId)
     {
         var peopleExists = await peopleService.GetByIdAsync(peopleId);
@@ -36,6 +42,7 @@ public class TransactionService(
         return transactions.Select(transactionMapper.MapToDto);
     }
 
+    /// <inheritdoc/>
     public async Task<TransactionDto?> GetByIdAsync(int id)
     {
         var transaction = await context.Transactions
@@ -50,6 +57,7 @@ public class TransactionService(
         return transactionMapper.MapToDto(transaction);
     }
 
+    /// <inheritdoc/>
     public async Task<TransactionDto> CreateAsync(TransactionDto transactionDto)
     {
         var people = await context.Peoples.FindAsync(transactionDto.People.Id);
@@ -72,6 +80,7 @@ public class TransactionService(
         return transactionMapper.MapToDto(transaction);
     }
 
+    /// <inheritdoc/>
     public async Task<TransactionDto?> UpdateAsync(int id, TransactionDto transactionDto)
     {
         var transaction = await context.Transactions.FindAsync(id);
@@ -96,6 +105,7 @@ public class TransactionService(
         return transactionMapper.MapToDto(transaction);
     }
 
+    /// <inheritdoc/>
     public async Task<bool> DeleteAsync(int id)
     {
         var transaction = await context.Transactions
@@ -113,6 +123,7 @@ public class TransactionService(
     }
 
 
+    /// <inheritdoc/>
     public async Task<bool> DeleteAllByPeopleIdAsync(int peopleId)
     {
         var peopleExists = await peopleService.GetByIdAsync(peopleId);
