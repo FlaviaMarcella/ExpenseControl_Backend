@@ -31,6 +31,30 @@ public class TransactionController(ITransactionService transactionService, IPeop
     }
 
     /// <summary>
+    /// Consulta de totais: lista todas as pessoas cadastradas com seus totais de
+    /// receitas, despesas e saldo, e ao final devolve o total geral (soma de todas
+    /// as pessoas). Atende diretamente ao requisito de "Consulta de totais" da
+    /// especificação do sistema.
+    /// </summary>
+    /// <remarks>
+    /// Observação de rota: como este método usa um segmento literal ("totals"),
+    /// o ASP.NET Core o resolve com prioridade sobre a rota parametrizada
+    /// GET /api/transaction/{id} — não há ambiguidade entre as duas.
+    /// </remarks>
+    [SwaggerOperation(
+        Summary = "Consulta de totais por pessoa e total geral",
+        Description =
+            "Retorna, para cada pessoa cadastrada, o total de receitas, o total de despesas e o saldo " +
+            "(receita - despesa). Ao final, retorna também o total geral somando todas as pessoas.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Totais calculados com sucesso", typeof(TotalsResponseDto))]
+    [HttpGet(ApiRoutes.Transaction.Totals)]
+    public async Task<ActionResult<TotalsResponseDto>> GetTotals()
+    {
+        var totals = await transactionService.GetTotalsAsync();
+        return Ok(totals);
+    }
+
+    /// <summary>
     /// Retorna todas as transações associadas a uma pessoa específica.
     /// </summary>
     /// <param name="peopleId"></param>
